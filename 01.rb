@@ -25,8 +25,8 @@ a2 = lines.map { |line| line.split[1].to_i }
 
 tallied = a2.tally
 
-result = a1.sum do |n|
-  n * (tallied[n] || 0)
+result = a1.sum do |item|
+  item * (tallied[item] || 0)
 end
 
 puts result
