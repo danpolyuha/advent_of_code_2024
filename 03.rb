@@ -2,7 +2,7 @@
 # 1
 #############################################################################
 
-string = File.read('tmp/adventofcode2024/input03.txt'); 0
+string = File.read('tmp/adventofcode2024/input03.txt')
 
 result = string.scan(/mul\((\d{1,3})\,(\d{1,3})\)/).sum do |item|
   item[0].to_i * item[1].to_i
@@ -14,7 +14,7 @@ puts result
 # 2
 #############################################################################
 
-string = File.read('tmp/adventofcode2024/input03.txt'); 0
+string = File.read('tmp/adventofcode2024/input03.txt')
 
 result = 0
 enabled = true
