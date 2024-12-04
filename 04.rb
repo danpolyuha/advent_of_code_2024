@@ -44,29 +44,29 @@ end
 end
 
 m.times do |i|
-  s = ''
+  string = ''
   j = 0
   k = m - i - 1
   while j < lines.length && k >= 0
-    s += lines[j][k]
+    string += lines[j][k]
     j += 1
     k -= 1
   end
 
-  all_lines << s
+  all_lines << string
 end
 
 (n - 1).times do |i|
-  s = ''
+  string = ''
   j = i + 1
   k = m - 1
   while j < n && k >= 0
-    s += lines[j][k]
+    string += lines[j][k]
     j += 1
     k -= 1
   end
 
-  all_lines << s
+  all_lines << string
 end
 
 all_lines += all_lines.map(&:reverse); 0
