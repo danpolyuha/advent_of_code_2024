@@ -2,14 +2,13 @@
 # 1
 #############################################################################
 
-lines = File.readlines('tmp/adventofcode2024/input05.txt').map(&:chomp)
+lines = File.readlines('tmp/adventofcode2024/input05.txt')
 first_update_index = lines.find_index { |line| line.include?(',') }
-rules = lines[..first_update_index - 2]
+rules = lines[..first_update_index - 2].map { |line| line.split('|').map(&:to_i) }
 updates = lines[first_update_index..].map { |line| line.split(',').map(&:to_i) }
 
 rule_hash = {}
-rules.each do |rule|
-  items = rule.split('|').map(&:to_i)
+rules.each do |items|
   rule_hash[items[0]] ||= Set.new
   rule_hash[items[0]] << items[1]
 end
@@ -22,27 +21,20 @@ def ok?(update, rule_hash)
   end
 end
 
-result = 0
-updates.each do |update|
-  if ok?(update, rule_hash)
-    result += update[update.length / 2]
-  end
-end
-
+result = updates.select { |update| ok?(update, rule_hash) }.sum { |update| update[update.length / 2] }
 puts result
 
 #############################################################################
 # 2
 #############################################################################
 
-lines = File.readlines('tmp/adventofcode2024/input05.txt').map(&:chomp)
+lines = File.readlines('tmp/adventofcode2024/input05.txt')
 first_update_index = lines.find_index { |line| line.include?(',') }
-rules = lines[..first_update_index - 2]
+rules = lines[..first_update_index - 2].map { |line| line.split('|').map(&:to_i) }
 updates = lines[first_update_index..].map { |line| line.split(',').map(&:to_i) }
 
 rule_hash = {}
-rules.each do |rule|
-  items = rule.split('|').map(&:to_i)
+rules.each do |items|
   rule_hash[items[0]] ||= Set.new
   rule_hash[items[0]] << items[1]
 end
@@ -68,9 +60,5 @@ def fix?(update, rule_hash)
   result
 end
 
-result = 0
-updates.each do |update|
-  result += update[update.length / 2] if fix?(update, rule_hash)
-end
-
+result = updates.select { |update| fix?(update, rule_hash) }.sum { |update| update[update.length / 2] }
 puts result
