@@ -2,12 +2,11 @@
 # 1
 #############################################################################
 
-matrix = File.readlines('tmp/adventofcode2024/input02.txt').map { |line| line.split.map(&:to_i) }
+matrix = File.readlines('input02.txt').map { |line| line.split.map(&:to_i) }
 
-result = 0
-matrix.each do |line|
+result = matrix.count do |line|
   diffs = line.each_cons(2).map { |a, b| b - a }
-  result += 1 if diffs.all? { |item| item.in?(-3..-1) } || diffs.all? { |n| n.in?(1..3) }
+  diffs.all? { |item| item.in?(-3..-1) } || diffs.all? { |n| n.in?(1..3) }
 end
 
 puts result
@@ -16,29 +15,17 @@ puts result
 # 2
 #############################################################################
 
-matrix = File.readlines('tmp/adventofcode2024/input02.txt').map { |line| line.split.map(&:to_i) }
+matrix = File.readlines('input02.txt').map { |line| line.split.map(&:to_i) }
 
 def ok?(array)
   diffs = array.each_cons(2).map { |a, b| b - a }
   diffs.all? { |item| item.in?(-3..-1) } || diffs.all? { |n| n.in?(1..3) }
 end
 
-result = 0
-matrix.each do |line|
-  ok = ok?(line)
-
-  unless ok
-    (0..line.length - 1).each do |i|
-      modified_line = line.dup
-      modified_line.delete_at(i)
-      if ok?(modified_line)
-        ok = true
-        break
-      end
-    end
+result = matrix.count do |line|
+  ok?(line) || line.each_index.any? do |index_to_remove|
+    ok?(line[0, index_to_remove] + line[index_to_remove + 1..])
   end
-
-  result += 1 if ok
 end
 
 puts result
