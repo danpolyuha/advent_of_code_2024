@@ -2,21 +2,14 @@
 # 1
 #############################################################################
 
-matrix = File.readlines('tmp/adventofcode2024/input06.txt').map(&:chomp).map(&:chars)
-m = matrix.first.length
+matrix = File.readlines('input06.txt').map(&:chomp).map(&:chars)
 n = matrix.length
+m = matrix.first.length
 
 y, x = nil, nil
 matrix.each_with_index do |line, index|
-  line.each_with_index do |char, index2|
-    if char == '^'
-      y = index
-      x = index2
-      break
-    end
-  end
-
-  break unless y.nil?
+  x = line.index('^')
+  y = index and break if x
 end
 
 dir = '^'
@@ -27,161 +20,100 @@ loop do
   if dir == '^'
     break if y == 0
 
-    if matrix[y - 1][x] == '#'
-      dir = '>'
-    else
-      y -= 1
-    end
+    matrix[y - 1][x] == '#' ? dir = '>' : y -= 1
   elsif dir == '>'
     break if x == m - 1
 
-    if matrix[y][x + 1] == '#'
-      dir = 'v'
-    else
-      x += 1
-    end
+    matrix[y][x + 1] == '#' ? dir = 'v' : x += 1
   elsif dir == 'v'
     break if y == n - 1
 
-    if matrix[y + 1][x] == '#'
-      dir = '<'
-    else
-      y += 1
-    end
+    matrix[y + 1][x] == '#' ? dir = '<' : y += 1
   elsif dir == '<'
     break if x == 0
 
-    if matrix[y][x - 1] == '#'
-      dir = '^'
-    else
-      x -= 1
-    end
+    matrix[y][x - 1] == '#' ? dir = '^' : x -= 1
   end
 end
 
-result = matrix.sum { |line| line.count { |c| c == 'X' } }
-puts result
+puts matrix.sum { |line| line.count { |c| c == 'X' } }
 
 #############################################################################
-# 2
+# 2 This is not a perfect performance, but it works for the input. It can be probably optimized by calculation during
+# initial path finding.
 #############################################################################
 
-initial_matrix = File.readlines('tmp/adventofcode2024/input06.txt').map(&:chomp).map(&:chars)
-m = initial_matrix.first.length
-n = initial_matrix.length
+initial_matrix = File.readlines('input06.txt').map(&:chomp).map(&:chars)
+@n = initial_matrix.length
+@m = initial_matrix.first.length
 
 y_start, x_start = nil, nil
 initial_matrix.each_with_index do |line, index|
-  line.each_with_index do |char, index2|
-    if char == '^'
-      y_start = index
-      x_start = index2
-      break
-    end
-  end
-
-  break unless y_start.nil?
+  x_start = line.index('^')
+  y_start = index and break if x_start
 end
 
 x, y = x_start, y_start
-matrix = initial_matrix.map(&:dup)
 dir = '^'
 path = []
 
 loop do
-  matrix[y][x] = 'X'
   path << [y, x]
 
   if dir == '^'
     break if y == 0
 
-    if matrix[y - 1][x] == '#'
-      dir = '>'
-    else
-      y -= 1
-    end
+    initial_matrix[y - 1][x] == '#' ? dir = '>' : y -= 1
   elsif dir == '>'
-    break if x == m - 1
+    break if x == @m - 1
 
-    if matrix[y][x + 1] == '#'
-      dir = 'v'
-    else
-      x += 1
-    end
+    initial_matrix[y][x + 1] == '#' ? dir = 'v' : x += 1
   elsif dir == 'v'
-    break if y == n - 1
+    break if y == @n - 1
 
-    if matrix[y + 1][x] == '#'
-      dir = '<'
-    else
-      y += 1
-    end
+    initial_matrix[y + 1][x] == '#' ? dir = '<' : y += 1
   elsif dir == '<'
     break if x == 0
 
-    if matrix[y][x - 1] == '#'
-      dir = '^'
-    else
-      x -= 1
-    end
+    initial_matrix[y][x - 1] == '#' ? dir = '^' : x -= 1
   end
 end
 
 def ok?(matrix, y, x)
-  m = matrix.first.length
-  n = matrix.length
-
   matrix = matrix.map(&:dup)
-  dir = '^'
+  dir = '0'
 
   loop do
-    item = "dir#{dir}"
-    return false if matrix[y][x].include?(item)
+    return false if matrix[y][x].include?(dir)
 
-    matrix[y][x] += item
+    matrix[y][x] += dir
 
-    if dir == '^'
+    if dir == '0'
       return true if y == 0
 
-      if matrix[y - 1][x] == '#'
-        dir = '>'
-      else
-        y -= 1
-      end
-    elsif dir == '>'
-      return true if x == m - 1
+      matrix[y - 1][x] == '#' ? dir = '1' : y -= 1
+    elsif dir == '1'
+      return true if x == @m - 1
 
-      if matrix[y][x + 1] == '#'
-        dir = 'v'
-      else
-        x += 1
-      end
-    elsif dir == 'v'
-      return true if y == n - 1
+      matrix[y][x + 1] == '#' ? dir = '2' : x += 1
+    elsif dir == '2'
+      return true if y == @n - 1
 
-      if matrix[y + 1][x] == '#'
-        dir = '<'
-      else
-        y += 1
-      end
-    elsif dir == '<'
+      matrix[y + 1][x] == '#' ? dir = '3' : y += 1
+    elsif dir == '3'
       return true if x == 0
 
-      if matrix[y][x - 1] == '#'
-        dir = '^'
-      else
-        x -= 1
-      end
+      matrix[y][x - 1] == '#' ? dir = '0' : x -= 1
     end
   end
 end
 
 result = 0
 
-path[1..].uniq.each do |index, index2|
-  initial_matrix[index][index2] = '#'
+path[1..].uniq.each do |y, x|
+  initial_matrix[y][x] = '#'
   result += 1 unless ok?(initial_matrix, y_start, x_start)
-  initial_matrix[index][index2] = '.'
+  initial_matrix[y][x] = '.'
 end
 
 puts result
