@@ -18,6 +18,6 @@ transposed_matrix = lines.map { |line| line.split.map(&:to_i) }.transpose
 a1 = transposed_matrix[0]
 a2 = transposed_matrix[1]
 
-tallied_a2 = a2.tally
+a2_tallied = a2.tally
 
-puts a1.sum { |item| item * (tallied_a2[item] || 0) }
+puts a1.sum { |item| item * (a2_tallied[item] || 0) }

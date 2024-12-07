@@ -2,92 +2,49 @@
 # 1
 #############################################################################
 
-lines = File.readlines('tmp/adventofcode2024/input04.txt').map(&:chomp)
-m = lines.first.length
+lines = File.readlines('input04.txt').map(&:chomp).map(&:chars)
 n = lines.length
+m = lines.first.length
 
-all_lines = lines.dup
+all_lines = lines + lines.transpose
 
-m.times do |x|
-  string = ''
-  n.times do |y|
-    string += lines[y][x]
+(0..m - 1).each do |hor_index|
+  diag1, diag2 = [], []
+  ([0, hor_index - n + 1].max..hor_index).reverse_each do |x|
+    diag1 << lines[hor_index - x][x]
+    diag2 << lines[n - 1 - (hor_index - x)][x]
   end
 
-  all_lines << string
+  all_lines += [diag1, diag2]
 end
 
-m.times do |i|
-  string = ''
-  j = 0
-  k = i
-  while j < n && k < m
-    string += lines[j][k]
-    j += 1
-    k += 1
+(1..n - 1).each do |ver_index|
+  diag1, diag2 = [], []
+  (ver_index..[n - 1, ver_index + m - 1].min).each do |y|
+    diag1 << lines[y][m - 1 - (y - ver_index)]
+    diag2 << lines[n - y - 1][m - 1 - (y - ver_index)]
   end
 
-  all_lines << string
+  all_lines += [diag1, diag2]
 end
 
-(n - 1).times do |i|
-  string = ''
-  j = i + 1
-  k = 0
-  while j < n && k < m
-    string += lines[j][k]
-    j += 1
-    k += 1
-  end
+all_lines += all_lines.map(&:reverse)
 
-  all_lines << string
-end
-
-m.times do |i|
-  string = ''
-  j = 0
-  k = m - i - 1
-  while j < lines.length && k >= 0
-    string += lines[j][k]
-    j += 1
-    k -= 1
-  end
-
-  all_lines << string
-end
-
-(n - 1).times do |i|
-  string = ''
-  j = i + 1
-  k = m - 1
-  while j < n && k >= 0
-    string += lines[j][k]
-    j += 1
-    k -= 1
-  end
-
-  all_lines << string
-end
-
-all_lines += all_lines.map(&:reverse); 0
-
-puts all_lines.map { |line| line.scan(/XMAS/).count }.sum
+puts all_lines.map { |line| line.join.scan(/XMAS/).count }.sum
 
 #############################################################################
 # 2
 #############################################################################
 
-lines = File.readlines('tmp/adventofcode2024/input04.txt').map(&:chomp)
-m = lines.first.length
-n = lines.length
+lines = File.readlines('input04.txt').map(&:chomp)
 
 def ok?(c1, c2, c3)
-  c1 == 'M' && c2 == 'A' && c3 == 'S' || c1 == 'S' && c2 == 'A' && c3 == 'M'
+  ['MAS', 'SAM'].include?(c1 + c2 + c3)
 end
 
 result = 0
-(0..n - 3).each do |i|
-  (0..m - 3).each do |j|
+(0..lines.length - 3).each do |i|
+  (0..lines.first.length - 3).each do |j|
     ok1 = ok?(lines[i][j], lines[i + 1][j + 1], lines[i + 2][j + 2])
     ok2 = ok?(lines[i][j + 2], lines[i + 1][j + 1], lines[i + 2][j])
     result += 1 if ok1 && ok2
