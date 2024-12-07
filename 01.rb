@@ -2,31 +2,22 @@
 # 1
 #############################################################################
 
-lines = File.readlines('tmp/adventofcode2024/input01.txt')
+lines = File.readlines('input01.txt')
+transposed_matrix = lines.map { |line| line.split.map(&:to_i) }.transpose
+a1 = transposed_matrix[0].sort
+a2 = transposed_matrix[1].sort
 
-a1 = lines.map { |line| line.split[0].to_i }.sort
-a2 = lines.map { |line| line.split[1].to_i }.sort
-
-result = 0
-a1.each_with_index do |item, index|
-  result += (item - a2[index]).abs
-end
-
-puts result
+puts a1.each_with_index.sum { |item, index| (item - a2[index]).abs }
 
 #############################################################################
 # 2
 #############################################################################
 
-lines = File.readlines('tmp/adventofcode2024/input01.txt')
+lines = File.readlines('input01.txt')
+transposed_matrix = lines.map { |line| line.split.map(&:to_i) }.transpose
+a1 = transposed_matrix[0]
+a2 = transposed_matrix[1]
 
-a1 = lines.map { |line| line.split[0].to_i }
-a2 = lines.map { |line| line.split[1].to_i }
+tallied_a2 = a2.tally
 
-tallied = a2.tally
-
-result = a1.sum do |item|
-  item * (tallied[item] || 0)
-end
-
-puts result
+puts a1.sum { |item| item * (tallied_a2[item] || 0) }
