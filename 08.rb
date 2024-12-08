@@ -30,7 +30,6 @@ puts locations.count
 # 2
 #############################################################################
 
-
 matrix = File.readlines('input08.txt').map(&:chomp).map(&:chars)
 n = matrix.length
 m = matrix.first.length
