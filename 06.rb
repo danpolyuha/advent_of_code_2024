@@ -4,7 +4,7 @@
 
 matrix = File.readlines('input06.txt').map(&:chomp).map(&:chars)
 n = matrix.length
-m = matrix.first.length
+m = matrix[0].length
 
 y, x = nil, nil
 matrix.each_with_index do |line, index|
@@ -45,7 +45,7 @@ puts matrix.sum { |line| line.count { |c| c == 'X' } }
 
 initial_matrix = File.readlines('input06.txt').map(&:chomp).map(&:chars)
 @n = initial_matrix.length
-@m = initial_matrix.first.length
+@m = initial_matrix[0].length
 
 y_start, x_start = nil, nil
 initial_matrix.each_with_index do |line, index|

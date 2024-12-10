@@ -4,7 +4,7 @@
 
 matrix = File.readlines('input08.txt').map(&:chomp).map(&:chars)
 n = matrix.length
-m = matrix.first.length
+m = matrix[0].length
 
 antennas = Hash.new { |h, k| h[k] = [] }
 
@@ -32,7 +32,7 @@ puts locations.count
 
 matrix = File.readlines('input08.txt').map(&:chomp).map(&:chars)
 n = matrix.length
-m = matrix.first.length
+m = matrix[0].length
 
 antennas = Hash.new { |h, k| h[k] = [] }
 

@@ -4,7 +4,7 @@
 
 lines = File.readlines('input04.txt').map(&:chomp).map(&:chars)
 n = lines.length
-m = lines.first.length
+m = lines[0].length
 
 all_lines = lines + lines.transpose
 
@@ -44,7 +44,7 @@ end
 
 result = 0
 (0..lines.length - 3).each do |i|
-  (0..lines.first.length - 3).each do |j|
+  (0..lines[0].length - 3).each do |j|
     ok1 = ok?(lines[i][j], lines[i + 1][j + 1], lines[i + 2][j + 2])
     ok2 = ok?(lines[i][j + 2], lines[i + 1][j + 1], lines[i + 2][j])
     result += 1 if ok1 && ok2
