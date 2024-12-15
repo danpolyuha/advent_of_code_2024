@@ -56,15 +56,15 @@ puts regions.sum { |r| r[:perimeter] * r[:cells].count }
 @processed_points = Set.new
 regions = []
 
-def process letter, y, x, region
+def process2 letter, y, x, region
   return if y < 0 || y >= @n || x < 0 || x >= @m || @matrix[y][x] != letter || @processed_points.include?([y, x])
 
   region[:cells] << [y, x]
   @processed_points << [y, x]
-  process(letter, y - 1, x, region)
-  process(letter, y + 1, x, region)
-  process(letter, y, x - 1, region)
-  process(letter, y, x + 1, region)
+  process2(letter, y - 1, x, region)
+  process2(letter, y + 1, x, region)
+  process2(letter, y, x - 1, region)
+  process2(letter, y, x + 1, region)
 end
 
 @matrix.each_with_index do |line, y|
@@ -73,7 +73,7 @@ end
 
     region = { letter: item, cells: [] }
     regions << region
-    process(item, y, x, region)
+    process2(item, y, x, region)
   end
 end
 

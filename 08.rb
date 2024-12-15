@@ -17,9 +17,9 @@ end
 locations = Set.new
 
 antennas.each_value do |antenna_points|
-  antenna_points.permutation(2).each do |point1, point2|
-    y = point1[0] - (point2[0] - point1[0])
-    x = point1[1] - (point2[1] - point1[1])
+  antenna_points.permutation(2).each do |(y1, x1), (y2, x2)|
+    y = y1 - (y2 - y1)
+    x = x1 - (x2 - x1)
     locations << [y, x] if y.between?(0, n - 1) && x.between?(0, m - 1)
   end
 end
@@ -45,11 +45,9 @@ end
 locations = Set.new
 
 antennas.each_value do |antenna_points|
-  antenna_points.permutation(2).each do |point1, point2|
-    y_delta = point2[0] - point1[0]
-    x_delta = point2[1] - point1[1]
-    y = point1[0]
-    x = point1[1]
+  antenna_points.permutation(2).each do |(y1, x1), (y2, x2)|
+    y_delta, x_delta = y2 - y1, x2 - x1
+    y, x = y1, x1
 
     loop do
       locations << [y, x]
