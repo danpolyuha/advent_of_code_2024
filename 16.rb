@@ -107,3 +107,7 @@ puts map[finish_y][finish_x]
 #############################################################################
 # 2 Hmmmmm...
 #############################################################################
+
+# The problem is that I can't find all paths during backtracking, because comparison of scores fails in some cases due
+# to overwriting. Idea for future: each cell is not a single score, but a hash with directions as keys and scores as
+# values. Then, during backtracking, we pick a value according to our next step.
