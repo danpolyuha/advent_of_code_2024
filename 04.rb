@@ -1,28 +1,30 @@
-lines = File.readlines('input04.txt').map(&:chomp).map(&:chars)
-n = lines.length
-m = lines[0].length
+word_search = File.readlines('input04.txt').map(&:chomp).map(&:chars)
+height = word_search.length
+width = word_search[0].length
 
-#############################################################################
+########################################################################################################################
 # 1
-#############################################################################
+########################################################################################################################
 
-all_lines = lines + lines.transpose
+all_lines = word_search + word_search.transpose
 
-(0..m - 1).each do |hor_index|
+(0..width - 1).each do |hor_index|
   diag1, diag2 = [], []
-  ([0, hor_index - n + 1].max..hor_index).reverse_each do |x|
-    diag1 << lines[hor_index - x][x]
-    diag2 << lines[n - 1 - (hor_index - x)][x]
+  hor_start = [0, hor_index - height + 1].max
+  (hor_start..hor_index).reverse_each do |x|
+    diag1 << word_search[hor_index - x][x]
+    diag2 << word_search[height - 1 - (hor_index - x)][x]
   end
 
   all_lines += [diag1, diag2]
 end
 
-(1..n - 1).each do |ver_index|
+(1..height - 1).each do |ver_index|
   diag1, diag2 = [], []
-  (ver_index..[n - 1, ver_index + m - 1].min).each do |y|
-    diag1 << lines[y][m - 1 - (y - ver_index)]
-    diag2 << lines[n - y - 1][m - 1 - (y - ver_index)]
+  ver_finish = [height - 1, ver_index + width - 1].min
+  (ver_index..ver_finish).each do |y|
+    diag1 << word_search[y][width - 1 - (y - ver_index)]
+    diag2 << word_search[height - y - 1][width - 1 - (y - ver_index)]
   end
 
   all_lines += [diag1, diag2]
@@ -31,22 +33,24 @@ end
 all_lines += all_lines.map(&:reverse)
 
 puts all_lines.map { |line| line.join.scan(/XMAS/).count }.sum
+# 2718
 
-#############################################################################
+########################################################################################################################
 # 2
-#############################################################################
+########################################################################################################################
 
-def ok?(c1, c2, c3)
+def x_mas?(c1, c2, c3)
   ['MAS', 'SAM'].include?(c1 + c2 + c3)
 end
 
-result = 0
-(0..lines.length - 3).each do |i|
-  (0..lines[0].length - 3).each do |j|
-    ok1 = ok?(lines[i][j], lines[i + 1][j + 1], lines[i + 2][j + 2])
-    ok2 = ok?(lines[i][j + 2], lines[i + 1][j + 1], lines[i + 2][j])
-    result += 1 if ok1 && ok2
+x_mas_count = 0
+(0..height - 3).each do |y|
+  (0..width - 3).each do |x|
+    diag1_mas = x_mas?(word_search[y][x], word_search[y + 1][x + 1], word_search[y + 2][x + 2])
+    diag2_mas = x_mas?(word_search[y][x + 2], word_search[y + 1][x + 1], word_search[y + 2][x])
+    x_mas_count += 1 if diag1_mas && diag2_mas
   end
 end
 
-puts result
+puts x_mas_count
+# 2046
