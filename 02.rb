@@ -1,29 +1,31 @@
-matrix = File.readlines('input02.txt').map { |line| line.split.map(&:to_i) }
+reports = File.readlines('input02.txt').map { |line| line.split.map(&:to_i) }
 
-#############################################################################
+########################################################################################################################
 # 1
-#############################################################################
+########################################################################################################################
 
-result = matrix.count do |line|
-  diffs = line.each_cons(2).map { |a, b| b - a }
+safe_report_count = reports.count do |report|
+  diffs = report.each_cons(2).map { |level1, level2| level2 - level1 }
   diffs.all? { |diff| (-3..-1).include?(diff) } || diffs.all? { |diff| (1..3).include?(diff) }
 end
 
-puts result
+puts safe_report_count
+# 624
 
-#############################################################################
+########################################################################################################################
 # 2
-#############################################################################
+########################################################################################################################
 
-def ok?(array)
-  diffs = array.each_cons(2).map { |a, b| b - a }
+def safe_report?(report)
+  diffs = report.each_cons(2).map { |level1, level2| level2 - level1 }
   diffs.all? { |diff| (-3..-1).include?(diff) } || diffs.all? { |diff| (1..3).include?(diff) }
 end
 
-result = matrix.count do |line|
-  ok?(line) || line.each_index.any? do |index_to_remove|
-    ok?(line[0, index_to_remove] + line[index_to_remove + 1..])
+safe_report_count = reports.count do |report|
+  safe_report?(report) || report.each_index.any? do |index_to_remove|
+    safe_report?(report[0, index_to_remove] + report[index_to_remove + 1..])
   end
 end
 
-puts result
+puts safe_report_count
+# 658
