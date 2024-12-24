@@ -1,33 +1,35 @@
-lines = File.readlines('input05.txt')
-first_update_index = lines.find_index { |line| line.include?(',') }
-rules = lines[..first_update_index - 2].map { |line| line.split('|').map(&:to_i) }
-updates = lines[first_update_index..].map { |line| line.split(',').map(&:to_i) }
+input_lines = File.readlines('input05.txt')
+sep_index = input_lines.index("\n")
+rules = input_lines[..sep_index - 1].map { |line| line.split('|').map(&:to_i) }
+updates = input_lines[sep_index..].map { |line| line.split(',').map(&:to_i) }
 
 @rule_hash = Hash.new { |h, k| h[k] = Set.new }
-rules.each { |items| @rule_hash[items[0]] << items[1] }
+rules.each { |page1, page2| @rule_hash[page1] << page2 }
 
-#############################################################################
+########################################################################################################################
 # 1
-#############################################################################
+########################################################################################################################
 
-def ok?(update)
-  update == update.sort do |a, b|
-    @rule_hash[a].include?(b) ? -1 : (@rule_hash[b].include?(a) ? 1 : 0)
+def ordered_update?(update)
+  update == update.sort do |page1, page2|
+    @rule_hash[page1].include?(page2) ? -1 : (@rule_hash[page2].include?(page1) ? 1 : 0)
   end
 end
 
-puts updates.select { |update| ok?(update) }.sum { |update| update[update.length / 2] }
+puts updates.select { |update| ordered_update?(update) }.sum { |update| update[update.length / 2] }
+# 5091
 
-#############################################################################
+########################################################################################################################
 # 2
-#############################################################################
+########################################################################################################################
 
-def fix?(update)
-  sorted_update = update.sort do |a, b|
-    @rule_hash[a].include?(b) ? -1 : (@rule_hash[b].include?(a) ? 1 : 0)
+def order_update(update)
+  sorted_update = update.sort do |page1, page2|
+    @rule_hash[page1].include?(page2) ? -1 : (@rule_hash[page2].include?(page1) ? 1 : 0)
   end
 
   sorted_update if sorted_update != update
 end
 
-puts updates.filter_map { |update| fix?(update) }.sum { |update| update[update.length / 2] }
+puts updates.filter_map { |update| order_update(update) }.sum { |update| update[update.length / 2] }
+# 4681
