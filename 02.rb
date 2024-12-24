@@ -1,8 +1,8 @@
+matrix = File.readlines('input02.txt').map { |line| line.split.map(&:to_i) }
+
 #############################################################################
 # 1
 #############################################################################
-
-matrix = File.readlines('input02.txt').map { |line| line.split.map(&:to_i) }
 
 result = matrix.count do |line|
   diffs = line.each_cons(2).map { |a, b| b - a }
@@ -14,8 +14,6 @@ puts result
 #############################################################################
 # 2
 #############################################################################
-
-matrix = File.readlines('input02.txt').map { |line| line.split.map(&:to_i) }
 
 def ok?(array)
   diffs = array.each_cons(2).map { |a, b| b - a }
