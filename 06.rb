@@ -45,7 +45,6 @@ puts dup_map.sum { |row| row.count { |cell| cell == 'X' } }
 ########################################################################################################################
 
 dup_map = map.map(&:dup)
-
 cur_y, cur_x = @start_y, @start_x
 cur_dir = '^'
 path = []
@@ -78,24 +77,24 @@ def map_has_loop?(map)
   cur_dir = '0'
 
   loop do
-    return false if dup_map[cur_y][cur_x].include?(cur_dir)
+    return true if dup_map[cur_y][cur_x].include?(cur_dir)
 
     dup_map[cur_y][cur_x] += cur_dir
 
     if cur_dir == '0'
-      return true if cur_y == 0
+      return false if cur_y == 0
 
       dup_map[cur_y - 1][cur_x] == '#' ? cur_dir = '1' : cur_y -= 1
     elsif cur_dir == '1'
-      return true if cur_x == @width - 1
+      return false if cur_x == @width - 1
 
       dup_map[cur_y][cur_x + 1] == '#' ? cur_dir = '2' : cur_x += 1
     elsif cur_dir == '2'
-      return true if cur_y == @height - 1
+      return false if cur_y == @height - 1
 
       dup_map[cur_y + 1][cur_x] == '#' ? cur_dir = '3' : cur_y += 1
     elsif cur_dir == '3'
-      return true if cur_x == 0
+      return false if cur_x == 0
 
       dup_map[cur_y][cur_x - 1] == '#' ? cur_dir = '0' : cur_x -= 1
     end
@@ -106,7 +105,7 @@ result = 0
 
 path[1..].uniq.each do |path_point_y, path_point_x|
   dup_map[path_point_y][path_point_x] = '#'
-  result += 1 unless map_has_loop?(dup_map)
+  result += 1 if map_has_loop?(dup_map)
   dup_map[path_point_y][path_point_x] = '.'
 end
 
