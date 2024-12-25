@@ -1,119 +1,114 @@
-#############################################################################
+map = File.readlines('input06.txt').map(&:chomp).map(&:chars)
+@height = map.length
+@width = map[0].length
+
+@start_y = map.index { |row| row.include?('^') }
+@start_x = map[@start_y].index('^')
+
+########################################################################################################################
 # 1
-#############################################################################
+########################################################################################################################
 
-matrix = File.readlines('input06.txt').map(&:chomp).map(&:chars)
-n = matrix.length
-m = matrix[0].length
-
-y, x = nil, nil
-matrix.each_with_index do |line, index|
-  x = line.index('^')
-  y = index and break if x
-end
-
-dir = '^'
+dup_map = map.map(&:dup)
+cur_y, cur_x = @start_y, @start_x
+cur_dir = '^'
 
 loop do
-  matrix[y][x] = 'X'
+  dup_map[cur_y][cur_x] = 'X'
 
-  if dir == '^'
-    break if y == 0
+  if cur_dir == '^'
+    break if cur_y == 0
 
-    matrix[y - 1][x] == '#' ? dir = '>' : y -= 1
-  elsif dir == '>'
-    break if x == m - 1
+    dup_map[cur_y - 1][cur_x] == '#' ? cur_dir = '>' : cur_y -= 1
+  elsif cur_dir == '>'
+    break if cur_x == @width - 1
 
-    matrix[y][x + 1] == '#' ? dir = 'v' : x += 1
-  elsif dir == 'v'
-    break if y == n - 1
+    dup_map[cur_y][cur_x + 1] == '#' ? cur_dir = 'v' : cur_x += 1
+  elsif cur_dir == 'v'
+    break if cur_y == @height - 1
 
-    matrix[y + 1][x] == '#' ? dir = '<' : y += 1
-  elsif dir == '<'
-    break if x == 0
+    dup_map[cur_y + 1][cur_x] == '#' ? cur_dir = '<' : cur_y += 1
+  elsif cur_dir == '<'
+    break if cur_x == 0
 
-    matrix[y][x - 1] == '#' ? dir = '^' : x -= 1
+    dup_map[cur_y][cur_x - 1] == '#' ? cur_dir = '^' : cur_x -= 1
   end
 end
 
-puts matrix.sum { |line| line.count { |c| c == 'X' } }
+puts dup_map.sum { |row| row.count { |cell| cell == 'X' } }
+# 5199
 
-#############################################################################
-# 2 This is not a perfect performance, but it works for the input. It can be probably optimized by calculation during
+########################################################################################################################
+# 2
+# This is not a perfect performance, but it works for the input. It can be probably optimized by calculation during
 # initial path finding.
-#############################################################################
+########################################################################################################################
 
-initial_matrix = File.readlines('input06.txt').map(&:chomp).map(&:chars)
-@n = initial_matrix.length
-@m = initial_matrix[0].length
+dup_map = map.map(&:dup)
 
-y_start, x_start = nil, nil
-initial_matrix.each_with_index do |line, index|
-  x_start = line.index('^')
-  y_start = index and break if x_start
-end
-
-x, y = x_start, y_start
-dir = '^'
+cur_y, cur_x = @start_y, @start_x
+cur_dir = '^'
 path = []
 
 loop do
-  path << [y, x]
+  path << [cur_y, cur_x]
 
-  if dir == '^'
-    break if y == 0
+  if cur_dir == '^'
+    break if cur_y == 0
 
-    initial_matrix[y - 1][x] == '#' ? dir = '>' : y -= 1
-  elsif dir == '>'
-    break if x == @m - 1
+    dup_map[cur_y - 1][cur_x] == '#' ? cur_dir = '>' : cur_y -= 1
+  elsif cur_dir == '>'
+    break if cur_x == @width - 1
 
-    initial_matrix[y][x + 1] == '#' ? dir = 'v' : x += 1
-  elsif dir == 'v'
-    break if y == @n - 1
+    dup_map[cur_y][cur_x + 1] == '#' ? cur_dir = 'v' : cur_x += 1
+  elsif cur_dir == 'v'
+    break if cur_y == @height - 1
 
-    initial_matrix[y + 1][x] == '#' ? dir = '<' : y += 1
-  elsif dir == '<'
-    break if x == 0
+    dup_map[cur_y + 1][cur_x] == '#' ? cur_dir = '<' : cur_y += 1
+  elsif cur_dir == '<'
+    break if cur_x == 0
 
-    initial_matrix[y][x - 1] == '#' ? dir = '^' : x -= 1
+    dup_map[cur_y][cur_x - 1] == '#' ? cur_dir = '^' : cur_x -= 1
   end
 end
 
-def ok?(matrix, y, x)
-  matrix = matrix.map(&:dup)
-  dir = '0'
+def map_has_loop?(map)
+  cur_y, cur_x = @start_y, @start_x
+  dup_map = map.map(&:dup)
+  cur_dir = '0'
 
   loop do
-    return false if matrix[y][x].include?(dir)
+    return false if dup_map[cur_y][cur_x].include?(cur_dir)
 
-    matrix[y][x] += dir
+    dup_map[cur_y][cur_x] += cur_dir
 
-    if dir == '0'
-      return true if y == 0
+    if cur_dir == '0'
+      return true if cur_y == 0
 
-      matrix[y - 1][x] == '#' ? dir = '1' : y -= 1
-    elsif dir == '1'
-      return true if x == @m - 1
+      dup_map[cur_y - 1][cur_x] == '#' ? cur_dir = '1' : cur_y -= 1
+    elsif cur_dir == '1'
+      return true if cur_x == @width - 1
 
-      matrix[y][x + 1] == '#' ? dir = '2' : x += 1
-    elsif dir == '2'
-      return true if y == @n - 1
+      dup_map[cur_y][cur_x + 1] == '#' ? cur_dir = '2' : cur_x += 1
+    elsif cur_dir == '2'
+      return true if cur_y == @height - 1
 
-      matrix[y + 1][x] == '#' ? dir = '3' : y += 1
-    elsif dir == '3'
-      return true if x == 0
+      dup_map[cur_y + 1][cur_x] == '#' ? cur_dir = '3' : cur_y += 1
+    elsif cur_dir == '3'
+      return true if cur_x == 0
 
-      matrix[y][x - 1] == '#' ? dir = '0' : x -= 1
+      dup_map[cur_y][cur_x - 1] == '#' ? cur_dir = '0' : cur_x -= 1
     end
   end
 end
 
 result = 0
 
-path[1..].uniq.each do |y, x|
-  initial_matrix[y][x] = '#'
-  result += 1 unless ok?(initial_matrix, y_start, x_start)
-  initial_matrix[y][x] = '.'
+path[1..].uniq.each do |path_point_y, path_point_x|
+  dup_map[path_point_y][path_point_x] = '#'
+  result += 1 unless map_has_loop?(dup_map)
+  dup_map[path_point_y][path_point_x] = '.'
 end
 
 puts result
+# 1915
