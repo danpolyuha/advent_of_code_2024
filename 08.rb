@@ -1,62 +1,52 @@
-#############################################################################
-# 1
-#############################################################################
-
-matrix = File.readlines('input08.txt').map(&:chomp).map(&:chars)
-n = matrix.length
-m = matrix[0].length
+map = File.readlines('input08.txt').map(&:chomp).map(&:chars)
+height = map.length
+width = map[0].length
 
 antennas = Hash.new { |h, k| h[k] = [] }
 
-matrix.each_with_index do |line, y|
-  line.each_with_index do |char, x|
-    antennas[char] << [y, x] if char != '.'
+map.each_with_index do |row, y|
+  row.each_with_index do |cell, x|
+    antennas[cell] << [y, x] if cell != '.'
   end
 end
 
+########################################################################################################################
+# 1
+########################################################################################################################
+
 locations = Set.new
 
-antennas.each_value do |antenna_points|
-  antenna_points.permutation(2).each do |(y1, x1), (y2, x2)|
-    y = y1 - (y2 - y1)
-    x = x1 - (x2 - x1)
-    locations << [y, x] if y.between?(0, n - 1) && x.between?(0, m - 1)
+antennas.each_value do |antennas_coords|
+  antennas_coords.permutation(2).each do |(antenna1_y, antenna1_x), (antenna2_y, antenna2_x)|
+    antinode_y = antenna1_y - (antenna2_y - antenna1_y)
+    antinode_x = antenna1_x - (antenna2_x - antenna1_x)
+    locations << [antinode_y, antinode_x] if antinode_y.between?(0, height - 1) && antinode_x.between?(0, width - 1)
   end
 end
 
 puts locations.count
+# 423
 
-#############################################################################
+########################################################################################################################
 # 2
-#############################################################################
-
-matrix = File.readlines('input08.txt').map(&:chomp).map(&:chars)
-n = matrix.length
-m = matrix[0].length
-
-antennas = Hash.new { |h, k| h[k] = [] }
-
-matrix.each_with_index do |line, y|
-  line.each_with_index do |char, x|
-    antennas[char] << [y, x] if char != '.'
-  end
-end
+########################################################################################################################
 
 locations = Set.new
 
-antennas.each_value do |antenna_points|
-  antenna_points.permutation(2).each do |(y1, x1), (y2, x2)|
-    y_delta, x_delta = y2 - y1, x2 - x1
-    y, x = y1, x1
+antennas.each_value do |antennas_coords|
+  antennas_coords.permutation(2).each do |(antenna1_y, antenna1_x), (antenna2_y, antenna2_x)|
+    y_delta, x_delta = antenna2_y - antenna1_y, antenna2_x - antenna1_x
+    antinode_y, antinode_x = antenna1_y, antenna1_x
 
     loop do
-      locations << [y, x]
+      locations << [antinode_y, antinode_x]
 
-      y -= y_delta
-      x -= x_delta
-      break unless y.between?(0, n - 1) && x.between?(0, m - 1)
+      antinode_y -= y_delta
+      antinode_x -= x_delta
+      break unless antinode_y.between?(0, height - 1) && antinode_x.between?(0, width - 1)
     end
   end
 end
 
 puts locations.count
+# 1287
