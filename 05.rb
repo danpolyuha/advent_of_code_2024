@@ -1,3 +1,5 @@
+# https://adventofcode.com/2024/day/5
+
 input_lines = File.readlines('input05.txt')
 sep_index = input_lines.index("\n")
 rules = input_lines[..sep_index - 1].map { |line| line.split('|').map(&:to_i) }

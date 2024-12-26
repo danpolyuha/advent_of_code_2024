@@ -1,3 +1,5 @@
+# https://adventofcode.com/2024/day/4
+
 word_search = File.readlines('input04.txt').map(&:chomp).map(&:chars)
 height = word_search.length
 width = word_search[0].length

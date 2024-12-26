@@ -1,3 +1,5 @@
+# https://adventofcode.com/2024/day/2
+
 reports = File.readlines('input02.txt').map { |line| line.split.map(&:to_i) }
 
 ########################################################################################################################

@@ -1,3 +1,5 @@
+# https://adventofcode.com/2024/day/8
+
 map = File.readlines('input08.txt').map(&:chomp).map(&:chars)
 height = map.length
 width = map[0].length

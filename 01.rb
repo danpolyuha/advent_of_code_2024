@@ -1,3 +1,5 @@
+# https://adventofcode.com/2024/day/1
+
 input_lines = File.readlines('input01.txt')
 loc_id_lists = input_lines.map { |line| line.split.map(&:to_i) }.transpose
 
