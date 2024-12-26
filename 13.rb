@@ -15,6 +15,7 @@ lines.each_slice(4) do |lines|
   prizes << { x:, y: }
 end
 
+# The thing is that there's only 1 solution per each equation
 def calc_min_price(prizes)
   min_price = 0
 
@@ -30,11 +31,11 @@ def calc_min_price(prizes)
     end
   end
 
-  return min_price
+  min_price
 end
 
 #############################################################################
-# 1 The thing is that there's only 1 solution per each equation
+# 1
 #############################################################################
 
 puts calc_min_price(prizes)
