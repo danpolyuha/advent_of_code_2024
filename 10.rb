@@ -1,51 +1,54 @@
-#############################################################################
+# https://adventofcode.com/2024/day/10
+
+@map = File.readlines('input10.txt').map(&:chomp).map(&:chars).map { |row| row.map(&:to_i) }
+@height = @map.size
+@width = @map[0].size
+
+########################################################################################################################
 # 1
-#############################################################################
+########################################################################################################################
 
-@lines = File.readlines('input10.txt').map(&:chomp).map(&:chars).map { |line| line.map(&:to_i) }
-@n = @lines.size
-@m = @lines[0].size
+def peak_count(y, x, current_elevation, current_peaks)
+  return 0 if y < 0 || y > @height - 1 || x < 0 || x > @width - 1
+  return 0 if @map[y][x] != current_elevation || current_peaks.include?([y, x])
 
-def paths(y, x, h, peaks)
-  return 0 if y < 0 || y > @n - 1 || x < 0 || x > @m - 1 || @lines[y][x] != h || peaks.include?([y, x])
+  current_peaks.add([y, x]) and return 1 if current_elevation == 9
 
-  peaks.add([y, x]) and return 1 if h == 9
-
-  h += 1
-  paths(y + 1, x, h, peaks) + paths(y - 1, x, h, peaks) + paths(y, x + 1, h, peaks) + paths(y, x - 1, h, peaks)
+  current_elevation += 1
+  peak_count(y + 1, x, current_elevation, current_peaks) + peak_count(y - 1, x, current_elevation, current_peaks) +
+    peak_count(y, x + 1, current_elevation, current_peaks) + peak_count(y, x - 1, current_elevation, current_peaks)
 end
 
 result = 0
-@lines.each_with_index do |line, y|
-  line.each_with_index do |cell, x|
-    result += paths(y, x, 0, Set.new) if cell == 0
+@map.each_with_index do |row, y|
+  row.each_with_index do |cell, x|
+    result += peak_count(y, x, 0, Set.new) if cell == 0
   end
 end
 
 puts result
+# 489
 
-#############################################################################
+########################################################################################################################
 # 2
-#############################################################################
+########################################################################################################################
 
-@lines = File.readlines('input10.txt').map(&:chomp).map(&:chars).map { |line| line.map(&:to_i) }
-@n = @lines.size
-@m = @lines[0].size
+def path_count(y, x, current_elevation)
+  return 0 if y < 0 || y > @height - 1 || x < 0 || x > @width - 1 || @map[y][x] != current_elevation
 
-def paths2(y, x, h)
-  return 0 if y < 0 || y > @n - 1 || x < 0 || x > @m - 1 || @lines[y][x] != h
+  return 1 if current_elevation == 9
 
-  return 1 if h == 9
-
-  h += 1
-  paths2(y + 1, x, h) + paths2(y - 1, x, h) + paths2(y, x + 1, h) + paths2(y, x - 1, h)
+  current_elevation += 1
+  path_count(y + 1, x, current_elevation) + path_count(y - 1, x, current_elevation) +
+    path_count(y, x + 1, current_elevation) + path_count(y, x - 1, current_elevation)
 end
 
 result = 0
-@lines.each_with_index do |line, y|
-  line.each_with_index do |cell, x|
-    result += paths2(y, x, 0) if cell == 0
+@map.each_with_index do |row, y|
+  row.each_with_index do |cell, x|
+    result += path_count(y, x, 0) if cell == 0
   end
 end
 
 puts result
+# 1086
