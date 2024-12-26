@@ -1,59 +1,42 @@
-#############################################################################
+# https://adventofcode.com/2024/day/11
+
+stones = File.read('input11.txt').scan(/\d+/).map(&:to_i)
+tallied_stones = Hash.new(0).merge(stones.tally)
+
+def blink(tallied_stones)
+  tallied_stones.dup.each do |stone_mark, count|
+    if stone_mark == 0
+      tallied_stones[1] += count
+      tallied_stones[0] -= count
+    elsif (stone_mark_s = stone_mark.to_s).length.even?
+      left_half = stone_mark_s[..stone_mark_s.length / 2 - 1].to_i
+      right_half = stone_mark_s[stone_mark_s.length / 2..].to_i
+      tallied_stones[left_half] += count
+      tallied_stones[right_half] += count
+      tallied_stones[stone_mark] -= count
+    else
+      tallied_stones[stone_mark * 2024] += count
+      tallied_stones[stone_mark] -= count
+    end
+  end
+
+  tallied_stones.delete_if { |_, value| value == 0 }
+end
+
+########################################################################################################################
 # 1
-#############################################################################
+########################################################################################################################
 
-items = File.read('input11.txt').scan(/\d+/).map(&:to_i)
+tallied_stones_dup = tallied_stones.dup
+25.times { blink(tallied_stones_dup) }
+puts tallied_stones_dup.values.sum
+# 211306
 
-tallied_items = Hash.new(0).merge(items.tally)
-
-25.times do
-  tallied_items.dup.each do |key, value|
-    if key == 0
-      tallied_items[1] += value
-      tallied_items[0] -= value
-    elsif (s = key.to_s).length.even?
-      n1 = s[0..s.length / 2 - 1].to_i
-      n2 = s[s.length / 2..-1].to_i
-      tallied_items[n1] += value
-      tallied_items[n2] += value
-      tallied_items[key] -= value
-    else
-      tallied_items[key * 2024] += value
-      tallied_items[key] -= value
-    end
-  end
-
-  tallied_items.delete_if { |_, value| value == 0 }
-end
-
-puts tallied_items.values.sum
-
-#############################################################################
+########################################################################################################################
 # 2
-#############################################################################
+########################################################################################################################
 
-items = File.read('input11.txt').scan(/\d+/).map(&:to_i)
-
-tallied_items = Hash.new(0).merge(items.tally)
-
-75.times do
-  tallied_items.dup.each do |key, value|
-    if key == 0
-      tallied_items[1] += value
-      tallied_items[0] -= value
-    elsif (s = key.to_s).length.even?
-      n1 = s[0..s.length / 2 - 1].to_i
-      n2 = s[s.length / 2..-1].to_i
-      tallied_items[n1] += value
-      tallied_items[n2] += value
-      tallied_items[key] -= value
-    else
-      tallied_items[key * 2024] += value
-      tallied_items[key] -= value
-    end
-  end
-
-  tallied_items.delete_if { |_, value| value == 0 }
-end
-
-puts tallied_items.values.sum
+tallied_stones_dup = tallied_stones.dup
+75.times { blink(tallied_stones_dup) }
+puts tallied_stones_dup.values.sum
+# 250783680217283
