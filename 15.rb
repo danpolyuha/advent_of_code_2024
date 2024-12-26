@@ -1,71 +1,74 @@
-#############################################################################
-# 1
-#############################################################################
+# https://adventofcode.com/2024/day/15
 
 lines = File.readlines('input15.txt').map(&:chomp)
-div_index = lines.index('')
-room = lines[..div_index - 1].map { |l| l.chars }
-path = lines[div_index + 1..].join
+separator_index = lines.index('')
+room = lines[..separator_index - 1].map { |l| l.chars }
+path = lines[separator_index + 1..].join
 
-cur_y = room.index { |r| r.include?('@') }
-cur_x = room[cur_y].index('@')
+########################################################################################################################
+# 1
+########################################################################################################################
+
+room_dup = room.map(&:dup)
+start_y = room_dup.index { |r| r.include?('@') }
+start_x = room_dup[start_y].index('@')
 
 path.each_char do |dir|
-  y, x = cur_y, cur_x
+  y, x = start_y, start_x
 
   if dir == '^'
     loop do
       y -= 1
-      break if room[y][x] == '#'
+      break if room_dup[y][x] == '#'
 
-      if room[y][x] == '.'
-        y.upto(cur_y - 1).each do |i|
-          room[i][x] = room[i + 1][x]
+      if room_dup[y][x] == '.'
+        y.upto(start_y - 1).each do |i|
+          room_dup[i][x] = room_dup[i + 1][x]
         end
-        room[cur_y][cur_x] = '.'
-        cur_y -= 1
+        room_dup[start_y][start_x] = '.'
+        start_y -= 1
         break
       end
     end
   elsif dir == 'v'
     loop do
       y += 1
-      break if room[y][x] == '#'
+      break if room_dup[y][x] == '#'
 
-      if room[y][x] == '.'
-        y.downto(cur_y + 1).each do |i|
-          room[i][x] = room[i - 1][x]
+      if room_dup[y][x] == '.'
+        y.downto(start_y + 1).each do |i|
+          room_dup[i][x] = room_dup[i - 1][x]
         end
-        room[cur_y][cur_x] = '.'
-        cur_y += 1
+        room_dup[start_y][start_x] = '.'
+        start_y += 1
         break
       end
     end
   elsif dir == '>'
     loop do
       x += 1
-      break if room[y][x] == '#'
+      break if room_dup[y][x] == '#'
 
-      if room[y][x] == '.'
-        x.downto(cur_x + 1).each do |i|
-          room[y][i] = room[y][i - 1]
+      if room_dup[y][x] == '.'
+        x.downto(start_x + 1).each do |i|
+          room_dup[y][i] = room_dup[y][i - 1]
         end
-        room[cur_y][cur_x] = '.'
-        cur_x += 1
+        room_dup[start_y][start_x] = '.'
+        start_x += 1
         break
       end
     end
   elsif dir == '<'
     loop do
       x -= 1
-      break if room[y][x] == '#'
+      break if room_dup[y][x] == '#'
 
-      if room[y][x] == '.'
-        x.upto(cur_x - 1).each do |i|
-          room[y][i] = room[y][i + 1]
+      if room_dup[y][x] == '.'
+        x.upto(start_x - 1).each do |i|
+          room_dup[y][i] = room_dup[y][i + 1]
         end
-        room[cur_y][cur_x] = '.'
-        cur_x -= 1
+        room_dup[start_y][start_x] = '.'
+        start_x -= 1
         break
       end
     end
@@ -73,161 +76,160 @@ path.each_char do |dir|
 end
 
 result = 0
-room.each_index do |y|
-  room[y].each_index do |x|
-    result += x + y * 100 if room[y][x] == 'O'
+room_dup.each_index do |y_coord|
+  room_dup[y_coord].each_index do |x_coord|
+    result += x_coord + y_coord * 100 if room_dup[y_coord][x_coord] == 'O'
   end
 end
 
 puts result
+# 1559280
 
-#############################################################################
-# 2 This one was the most difficult so far
-#############################################################################
+########################################################################################################################
+# 2
+########################################################################################################################
 
-lines = File.readlines('input15.txt').map(&:chomp)
-div_index = lines.index('')
-original_room = lines[..div_index - 1].map { |l| l.chars }
-path = lines[div_index + 1..].join
-
-@room = []
-original_room.each do |original_line|
-  line = []
-  original_line.each do |c|
+@updated_room = []
+room.each do |row|
+  updated_row = []
+  row.each do |c|
     if c == '@'
-      line += ['@', '.']
+      updated_row += ['@', '.']
     elsif c == 'O'
-      line += ['[', ']']
+      updated_row += ['[', ']']
     else
-      line += [c, c]
+      updated_row += [c, c]
     end
   end
 
-  @room << line
+  @updated_room << updated_row
 end
 
-cur_y = @room.index { |r| r.include?('@') }
-cur_x = @room[cur_y].index('@')
+start_y = @updated_room.index { |r| r.include?('@') }
+start_x = @updated_room[start_y].index('@')
 
-def boxes_up(coords, y, x)
-  if @room[y - 1][x] == '['
-    coords << [y - 1, x]
-    boxes_up(coords, y - 1, x)
-    boxes_up(coords, y - 1, x + 1)
-  elsif @room[y - 1][x] == ']'
-    coords << [y - 1, x - 1]
-    boxes_up(coords, y - 1, x - 1)
-    boxes_up(coords, y - 1, x)
+def boxes_up(box_coords, y, x)
+  if @updated_room[y - 1][x] == '['
+    box_coords << [y - 1, x]
+    boxes_up(box_coords, y - 1, x)
+    boxes_up(box_coords, y - 1, x + 1)
+  elsif @updated_room[y - 1][x] == ']'
+    box_coords << [y - 1, x - 1]
+    boxes_up(box_coords, y - 1, x - 1)
+    boxes_up(box_coords, y - 1, x)
   end
 end
 
-def boxes_down(coords, y, x)
-  if @room[y + 1][x] == '['
-    coords << [y + 1, x]
-    boxes_down(coords, y + 1, x)
-    boxes_down(coords, y + 1, x + 1)
-  elsif @room[y + 1][x] == ']'
-    coords << [y + 1, x - 1]
-    boxes_down(coords, y + 1, x - 1)
-    boxes_down(coords, y + 1, x)
+def boxes_down(box_coords, y, x)
+  if @updated_room[y + 1][x] == '['
+    box_coords << [y + 1, x]
+    boxes_down(box_coords, y + 1, x)
+    boxes_down(box_coords, y + 1, x + 1)
+  elsif @updated_room[y + 1][x] == ']'
+    box_coords << [y + 1, x - 1]
+    boxes_down(box_coords, y + 1, x - 1)
+    boxes_down(box_coords, y + 1, x)
   end
 end
 
 path.each_char do |dir|
-  y, x = cur_y, cur_x
+  y, x = start_y, start_x
 
   if dir == '>'
     loop do
       x += 1
-      break if @room[y][x] == '#'
+      break if @updated_room[y][x] == '#'
 
-      if @room[y][x] == '.'
-        x.downto(cur_x + 1).each do |i|
-          @room[y][i] = @room[y][i - 1]
+      if @updated_room[y][x] == '.'
+        x.downto(start_x + 1).each do |i|
+          @updated_room[y][i] = @updated_room[y][i - 1]
         end
-        @room[cur_y][cur_x] = '.'
-        cur_x += 1
+        @updated_room[start_y][start_x] = '.'
+        start_x += 1
         break
       end
     end
   elsif dir == '<'
     loop do
       x -= 1
-      break if @room[y][x] == '#'
+      break if @updated_room[y][x] == '#'
 
-      if @room[y][x] == '.'
-        x.upto(cur_x - 1).each do |i|
-          @room[y][i] = @room[y][i + 1]
+      if @updated_room[y][x] == '.'
+        x.upto(start_x - 1).each do |i|
+          @updated_room[y][i] = @updated_room[y][i + 1]
         end
-        @room[cur_y][cur_x] = '.'
-        cur_x -= 1
+        @updated_room[start_y][start_x] = '.'
+        start_x -= 1
         break
       end
     end
   elsif dir == '^'
     move = false
 
-    if @room[y - 1][x] == '[' || @room[y - 1][x] == ']'
-      coords = []
-      boxes_up(coords, y, x)
+    if @updated_room[y - 1][x] == '[' || @updated_room[y - 1][x] == ']'
+      box_coords = []
+      boxes_up(box_coords, y, x)
 
-      ok = coords.all? { |yy, xx| @room[yy - 1][xx] != '#' && @room[yy - 1][xx + 1] != '#' }
-      if ok
-        coords.sort_by(&:first).each do |yy, xx|
-          @room[yy - 1][xx] = '['
-          @room[yy - 1][xx + 1] = ']'
-          @room[yy][xx] = '.'
-          @room[yy][xx + 1] = '.'
+      can_move = box_coords.all? do |box_y, box_x|
+        @updated_room[box_y - 1][box_x] != '#' && @updated_room[box_y - 1][box_x + 1] != '#'
+      end
+      if can_move
+        box_coords.sort_by(&:first).each do |box_y, box_x|
+          @updated_room[box_y - 1][box_x] = '['
+          @updated_room[box_y - 1][box_x + 1] = ']'
+          @updated_room[box_y][box_x] = '.'
+          @updated_room[box_y][box_x + 1] = '.'
         end
 
         move = true
       end
     else
-      move = true if @room[y - 1][x] == '.'
+      move = true if @updated_room[y - 1][x] == '.'
     end
 
     if move
-      @room[y - 1][x] = '@'
-      @room[y][x] = '.'
-      cur_y -= 1
+      @updated_room[y - 1][x] = '@'
+      @updated_room[y][x] = '.'
+      start_y -= 1
     end
   elsif dir == 'v'
     move = false
 
-    if @room[y + 1][x] == '[' || @room[y + 1][x] == ']'
-      coords = []
-      boxes_down(coords, y, x)
+    if @updated_room[y + 1][x] == '[' || @updated_room[y + 1][x] == ']'
+      box_coords = []
+      boxes_down(box_coords, y, x)
 
-      ok = coords.all? { |yy, xx| @room[yy + 1][xx] != '#' && @room[yy + 1][xx + 1] != '#' }
-      if ok
-        coords.sort_by(&:first).reverse.each do |yy, xx|
-          @room[yy + 1][xx] = '['
-          @room[yy + 1][xx + 1] = ']'
-          @room[yy][xx] = '.'
-          @room[yy][xx + 1] = '.'
+      can_move = box_coords.all? do |box_y, box_x|
+        @updated_room[box_y + 1][box_x] != '#' && @updated_room[box_y + 1][box_x + 1] != '#'
+      end
+      if can_move
+        box_coords.sort_by(&:first).reverse.each do |box_y, box_x|
+          @updated_room[box_y + 1][box_x] = '['
+          @updated_room[box_y + 1][box_x + 1] = ']'
+          @updated_room[box_y][box_x] = '.'
+          @updated_room[box_y][box_x + 1] = '.'
         end
 
         move = true
       end
     else
-      move = true if @room[y + 1][x] == '.'
+      move = true if @updated_room[y + 1][x] == '.'
     end
 
     if move
-      @room[y + 1][x] = '@'
-      @room[y][x] = '.'
-      cur_y += 1
+      @updated_room[y + 1][x] = '@'
+      @updated_room[y][x] = '.'
+      start_y += 1
     end
   end
 end
 
 result = 0
-@room.each_index do |y|
-  @room[y].each_index do |x|
-    if @room[y][x] == '['
-      result += x + y * 100
-    end
+@updated_room.each_index do |y_coord|
+  @updated_room[y_coord].each_index do |x_coord|
+    result += x_coord + y_coord * 100 if @updated_room[y_coord][x_coord] == '['
   end
 end
 
 puts result
+# 1576353
