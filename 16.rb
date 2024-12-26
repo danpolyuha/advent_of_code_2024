@@ -1,6 +1,4 @@
-#############################################################################
-# 1
-#############################################################################
+# https://adventofcode.com/2024/day/16
 
 map = File.readlines('input16.txt').map(&:chomp).map(&:chars)
 
@@ -16,84 +14,88 @@ map.each_index do |y|
   end
 end
 
-paths = [{ y: start_y, x: start_x }]
+########################################################################################################################
+# 1
+########################################################################################################################
+
+paths = [[start_y, start_x]]
 dirs = { [start_y, start_x] => 'e' }
 
 loop do
   new_paths = []
 
-  paths.each do |path|
-    score = map[path[:y]][path[:x]]
+  paths.each do |y, x|
+    score = map[y][x]
 
-    if dirs[[path[:y], path[:x]]] == 'e'
-      if map[path[:y]][path[:x] + 1] == 0 || map[path[:y]][path[:x] + 1] > score + 1
-        new_paths << { y: path[:y], x: path[:x] + 1 }
-        map[path[:y]][path[:x] + 1] = score + 1
-        dirs[[path[:y], path[:x] + 1]] = 'e'
+    if dirs[[y, x]] == 'e'
+      if map[y][x + 1] == 0 || map[y][x + 1] > score + 1
+        new_paths << [y, x + 1]
+        map[y][x + 1] = score + 1
+        dirs[[y, x + 1]] = 'e'
       end
-      if map[path[:y] - 1][path[:x]] == 0 || map[path[:y] - 1][path[:x]] > score + 1001
-        new_paths << { y: path[:y] - 1, x: path[:x] }
-        map[path[:y] - 1][path[:x]] = score + 1001
-        dirs[[path[:y] - 1, path[:x]]] = 'n'
+      if map[y - 1][x] == 0 || map[y - 1][x] > score + 1001
+        new_paths << [y - 1, x]
+        map[y - 1][x] = score + 1001
+        dirs[[y - 1, x]] = 'n'
       end
-      if map[path[:y] + 1][path[:x]] == 0 || map[path[:y] + 1][path[:x]] > score + 1001
-        new_paths << { y: path[:y] + 1, x: path[:x] }
-        map[path[:y] + 1][path[:x]] = score + 1001
-        dirs[[path[:y] + 1, path[:x]]] = 's'
+      if map[y + 1][x] == 0 || map[y + 1][x] > score + 1001
+        new_paths << [y + 1, x]
+        map[y + 1][x] = score + 1001
+        dirs[[y + 1, x]] = 's'
       end
     end
 
-    if dirs[[path[:y], path[:x]]] == 'n'
-      if map[path[:y] - 1][path[:x]] == 0 || map[path[:y] - 1][path[:x]] > score + 1
-        new_paths << { y: path[:y] - 1, x: path[:x] }
-        map[path[:y] - 1][path[:x]] = score + 1
-        dirs[[path[:y] - 1, path[:x]]] = 'n'
+    if dirs[[y, x]] == 'n'
+      if map[y - 1][x] == 0 || map[y - 1][x] > score + 1
+        new_paths << [y - 1, x]
+        map[y - 1][x] = score + 1
+        dirs[[y - 1, x]] = 'n'
       end
-      if map[path[:y]][path[:x] + 1] == 0 || map[path[:y]][path[:x] + 1] > score + 1001
-        new_paths << { y: path[:y], x: path[:x] + 1 }
-        map[path[:y]][path[:x] + 1] = score + 1001
-        dirs[[path[:y], path[:x] + 1]] = 'e'
+      if map[y][x + 1] == 0 || map[y][x + 1] > score + 1001
+        new_paths << [y, x + 1]
+        map[y][x + 1] = score + 1001
+        dirs[[y, x + 1]] = 'e'
       end
-      if map[path[:y]][path[:x] - 1] == 0 || map[path[:y]][path[:x] - 1] > score + 1001
-        new_paths << { y: path[:y], x: path[:x] - 1 }
-        map[path[:y]][path[:x] - 1] = score + 1001
-        dirs[[path[:y], path[:x] - 1]] = 'w'
-      end
-    end
-
-    if dirs[[path[:y], path[:x]]] == 's'
-      if map[path[:y] + 1][path[:x]] == 0 || map[path[:y] + 1][path[:x]] > score + 1
-        new_paths << { y: path[:y] + 1, x: path[:x] }
-        map[path[:y] + 1][path[:x]] = score + 1
-        dirs[[path[:y] + 1, path[:x]]] = 's'
-      end
-      if map[path[:y]][path[:x] + 1] == 0 || map[path[:y]][path[:x] + 1] > score + 1001
-        new_paths << { y: path[:y], x: path[:x] + 1 }
-        map[path[:y]][path[:x] + 1] = score + 1001
-        dirs[[path[:y], path[:x] + 1]] = 'e'
-      end
-      if map[path[:y]][path[:x] - 1] == 0 || map[path[:y]][path[:x] - 1] > score + 1001
-        new_paths << { y: path[:y], x: path[:x] - 1 }
-        map[path[:y]][path[:x] - 1] = score + 1001
-        dirs[[path[:y], path[:x] - 1]] = 'w'
+      if map[y][x - 1] == 0 || map[y][x - 1] > score + 1001
+        new_paths << [y, x - 1]
+        map[y][x - 1] = score + 1001
+        dirs[[y, x - 1]] = 'w'
       end
     end
 
-    if dirs[[path[:y], path[:x]]] == 'w'
-      if map[path[:y]][path[:x] - 1] == 0 || map[path[:y]][path[:x] - 1] > score + 1
-        new_paths << { y: path[:y], x: path[:x] - 1 }
-        map[path[:y]][path[:x] - 1] = score + 1
-        dirs[[path[:y], path[:x] - 1]] = 'w'
+    if dirs[[y, x]] == 's'
+      if map[y + 1][x] == 0 || map[y + 1][x] > score + 1
+        new_paths << [y + 1, x]
+        map[y + 1][x] = score + 1
+        dirs[[y + 1, x]] = 's'
       end
-      if map[path[:y] - 1][path[:x]] == 0 || map[path[:y] - 1][path[:x]] > score + 1001
-        new_paths << { y: path[:y] - 1, x: path[:x] }
-        map[path[:y] - 1][path[:x]] = score + 1001
-        dirs[[path[:y] - 1, path[:x]]] = 'n'
+      if map[y][x + 1] == 0 || map[y][x + 1] > score + 1001
+        new_paths << [y, x + 1]
+        map[y][x + 1] = score + 1001
+        dirs[[y, x + 1]] = 'e'
       end
-      if map[path[:y] + 1][path[:x]] == 0 || map[path[:y] + 1][path[:x]] > score + 1001
-        new_paths << { y: path[:y] + 1, x: path[:x] }
-        map[path[:y] + 1][path[:x]] = score + 1001
-        dirs[[path[:y] + 1, path[:x]]] = 's'
+      if map[y][x - 1] == 0 || map[y][x - 1] > score + 1001
+        new_paths << [y, x - 1]
+        map[y][x - 1] = score + 1001
+        dirs[[y, x - 1]] = 'w'
+      end
+    end
+
+    if dirs[[y, x]] == 'w'
+      if map[y][x - 1] == 0 || map[y][x - 1] > score + 1
+        new_paths << [y, x - 1]
+        map[y][x - 1] = score + 1
+        dirs[[y, x - 1]] = 'w'
+      end
+      if map[y - 1][x] == 0 || map[y - 1][x] > score + 1001
+        new_paths << [y - 1, x]
+        map[y - 1][x] = score + 1001
+        dirs[[y - 1, x]] = 'n'
+      end
+      if map[y + 1][x] == 0 || map[y + 1][x] > score + 1001
+        new_paths << [y + 1, x]
+        map[y + 1][x] = score + 1001
+        dirs[[y + 1, x]] = 's'
       end
     end
   end
@@ -104,10 +106,6 @@ end
 
 puts map[finish_y][finish_x]
 
-#############################################################################
-# 2 Hmmmmm...
-#############################################################################
-
-# The problem is that I can't find all paths during backtracking, because comparison of scores fails in some cases due
-# to overwriting. Idea for future: each cell is not a single score, but a hash with directions as keys and scores as
-# values. Then, during backtracking, we pick a value according to our next step.
+########################################################################################################################
+# 2
+########################################################################################################################
